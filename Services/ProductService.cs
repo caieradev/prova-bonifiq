@@ -3,19 +3,24 @@ using ProvaPub.Repository;
 
 namespace ProvaPub.Services
 {
-	public class ProductService
+	public class ProductService : BaseService
 	{
-		TestDbContext _ctx;
+		public ProductService(TestDbContext ctx) : base(ctx) { }
 
-		public ProductService(TestDbContext ctx)
+		//TODO: Create ProductRepository
+		public ProductList ListProducts(int page)
 		{
-			_ctx = ctx;
-		}
+			var data = _ctx.Products
+					.OrderBy(x => x.Id)
+					.Skip((page -1) * 10)
+					.Take(10)
+					.ToList();
 
-		public ProductList  ListProducts(int page)
-		{
-			return new ProductList() {  HasNext=false, TotalCount =10, Products = _ctx.Products.ToList() };
+			return new ProductList() {  
+				HasNext = _ctx.Products.Skip(page * 10).Count() > 0,
+				TotalCount = data.Count(), 
+				Products = data
+			};
 		}
-
 	}
 }

@@ -13,14 +13,10 @@ namespace ProvaPub.Controllers
 	{
 		private readonly RandomService _randomService;
 
-		public Parte1Controller(RandomService randomService)
-		{
-			_randomService = randomService;
-		}
+		public Parte1Controller(RandomService randomService) { _randomService = randomService; }
+
 		[HttpGet]
-		public int Index()
-		{
-			return _randomService.GetRandom();
-		}
+		public int Index() =>
+			_randomService.GetRandom();
 	}
 }
