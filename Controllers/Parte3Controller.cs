@@ -14,12 +14,14 @@ namespace ProvaPub.Controllers
 	/// </summary>
 	[ApiController]
 	[Route("[controller]")]
-	public class Parte3Controller :  ControllerBase
+	public class Parte3Controller : ControllerBase
 	{
+		private readonly OrderService _orderService;
+		public Parte3Controller(OrderService orderService) { this._orderService = orderService; }
+
 		[HttpGet("orders")]
-		public async Task<Order> PlaceOrder(string paymentMethod, decimal paymentValue, int customerId)
-		{
-			return await new OrderService().PayOrder(paymentMethod, paymentValue, customerId);
-		}
+		public async Task<Order> PlaceOrder(string paymentMethod, decimal paymentValue, int customerId) =>
+			await _orderService.PayOrder(paymentMethod, paymentValue, customerId);
 	}
+
 }
