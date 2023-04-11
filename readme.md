@@ -1,7 +1,7 @@
-## Alguns comentários:
+# Alguns comentários:
 
-# Tive que alterar o appsettings devido ao localDB não ser compatível com o Mac M1. Utilizei um container do docker para rodar a base de dados.
-# Por algum motivo, nos meus testes utilizando o Swagger, as listagens estavam voltando dados equivocados. Entretanto ao testar no Postman, estava tudo certo. Acredito que seja devido algum cache do navegador, mas somente para deixar avisado.
+## Tive que alterar o appsettings devido ao localDB não ser compatível com o Mac M1. Utilizei um container do docker para rodar a base de dados.
+## Por algum motivo, nos meus testes utilizando o Swagger, as listagens estavam voltando dados equivocados. Entretanto ao testar no Postman, estava tudo certo. Acredito que seja devido algum cache do navegador, mas somente para deixar avisado.
 
 # Prova BonifiQ Backend
 Ol�!
