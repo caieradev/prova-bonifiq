@@ -1,6 +1,6 @@
 ﻿namespace ProvaPub.Services
 {
-	public class RandomService
+	public class RandomService : IService
 	{
 		public int seed { get; set; }
 		public RandomService() { }

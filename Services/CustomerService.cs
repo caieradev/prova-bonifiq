@@ -1,23 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProvaPub.Models;
-using ProvaPub.Repository;
+﻿using ProvaPub.Models;
+using ProvaPub.Repositories;
 
 namespace ProvaPub.Services
 {
-    public class CustomerService : BaseService
+    public class CustomerService : BaseService<CustomerRepository>, IService
     {
-        public CustomerService(TestDbContext ctx) : base(ctx) { }
+		private readonly OrderRepository orderRepository;
 
-        public CustomerList ListCustomers(int page)
+        public CustomerService(CustomerRepository repository, OrderRepository _orderRepository) : base(repository) { this.orderRepository = _orderRepository; }
+
+        public async Task<CustomerList> ListCustomers(int page)
         {
-            var data = _ctx.Customers
-					.OrderBy(x => x.Id)
-					.Skip((page -1) * 10)
-					.Take(10)
-					.ToList();
+            List<Customer> data = await this._mainRepository.GetList(page, 10);
+            var hasNext = data.Count() >= 11;
+
+            data = data
+                .Take(10)
+                .ToList();
 
 			return new CustomerList() {  
-				HasNext = _ctx.Products.Skip(page * 10).Count() > 0,
+				HasNext = hasNext,
 				TotalCount = data.Count(), 
 				Customers = data
 			};
@@ -25,23 +27,23 @@ namespace ProvaPub.Services
 
         public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
         {
-            if (customerId <= 0) throw new ArgumentOutOfRangeException(nameof(customerId));
+            if (customerId <= 0) 
+                throw new ArgumentOutOfRangeException(nameof(customerId));
 
-            if (purchaseValue <= 0) throw new ArgumentOutOfRangeException(nameof(purchaseValue));
+            if (purchaseValue <= 0)
+                throw new ArgumentOutOfRangeException(nameof(purchaseValue));
 
             //Business Rule: Non registered Customers cannot purchase
-            var customer = await _ctx.Customers.FindAsync(customerId);
-            if (customer == null) throw new InvalidOperationException($"Customer Id {customerId} does not exists");
+            var customer = await this._mainRepository.FindAsync(customerId);
+            if (customer == null)   
+                throw new InvalidOperationException($"Customer Id {customerId} does not exists");
 
             //Business Rule: A customer can purchase only a single time per month
-            var baseDate = DateTime.UtcNow.AddMonths(-1);
-            var ordersInThisMonth = await _ctx.Orders.CountAsync(s => s.CustomerId == customerId && s.OrderDate >= baseDate);
-            if (ordersInThisMonth > 0)
+            if (await this.orderRepository.HasOrdersInThisMonth(customerId))
                 return false;
 
             //Business Rule: A customer that never bought before can make a first purchase of maximum 100,00
-            var haveBoughtBefore = await _ctx.Customers.CountAsync(s => s.Id == customerId && s.Orders.Any());
-            if (haveBoughtBefore == 0 && purchaseValue > 100)
+            if (!(await this._mainRepository.CustomerHaveBoughtBefore(customerId)) && purchaseValue > 100)
                 return false;
 
             return true;

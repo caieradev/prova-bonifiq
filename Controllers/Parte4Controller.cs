@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProvaPub.Models;
-using ProvaPub.Repository;
 using ProvaPub.Services;
 
 namespace ProvaPub.Controllers
@@ -18,18 +16,14 @@ namespace ProvaPub.Controllers
 	[Route("[controller]")]
 	public class Parte4Controller :  ControllerBase
 	{
-        TestDbContext _ctx;
-        public Parte4Controller(TestDbContext ctx)
+		private readonly CustomerService _customerService;
+        public Parte4Controller(CustomerService customerService)
         {
-            _ctx = ctx;
+            this._customerService = customerService;
         }
 
         [HttpGet("CanPurchase")]
-		public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
-		{
-			CustomerService svc = new CustomerService(_ctx);
-
-			return await svc.CanPurchase(customerId, purchaseValue);
-		}
+		public async Task<bool> CanPurchase(int customerId, decimal purchaseValue) =>
+			await this._customerService.CanPurchase(customerId, purchaseValue);
 	}
 }

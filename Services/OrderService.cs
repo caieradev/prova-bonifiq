@@ -1,10 +1,9 @@
-﻿using System.Reflection;
-using ProvaPub.Models;
+﻿using ProvaPub.Models;
 using ProvaPub.Strategies;
 
 namespace ProvaPub.Services
 {
-	public class OrderService
+	public class OrderService : IService
 	{
 		private readonly IDictionary<string, IPaymentStrategy> _paymentStrategies = new Dictionary<string, IPaymentStrategy>();
 		

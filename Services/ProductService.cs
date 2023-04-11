@@ -1,23 +1,24 @@
 ﻿using ProvaPub.Models;
-using ProvaPub.Repository;
+using ProvaPub.Repositories;
 
 namespace ProvaPub.Services
 {
-	public class ProductService : BaseService
+	public class ProductService : BaseService<ProductRepository>, IService
 	{
-		public ProductService(TestDbContext ctx) : base(ctx) { }
+		public ProductService(ProductRepository repository) : base(repository) { }
 
 		//TODO: Create ProductRepository
-		public ProductList ListProducts(int page)
+		public async Task<ProductList> ListProducts(int page)
 		{
-			var data = _ctx.Products
-					.OrderBy(x => x.Id)
-					.Skip((page -1) * 10)
-					.Take(10)
-					.ToList();
+			List<Product> data = await this._mainRepository.GetList(page, 10);
+            var hasNext = data.Count() >= 11;
+
+            data = data
+                .Take(10)
+                .ToList();
 
 			return new ProductList() {  
-				HasNext = _ctx.Products.Skip(page * 10).Count() > 0,
+				HasNext = hasNext,
 				TotalCount = data.Count(), 
 				Products = data
 			};

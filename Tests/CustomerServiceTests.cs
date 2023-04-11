@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using ProvaPub.Models;
-using ProvaPub.Repository;
+using ProvaPub.Repositories;
 using ProvaPub.Services;
 
 namespace ProvaPub.Tests;
@@ -17,8 +17,10 @@ public class CustomerServiceTests
     {
         var builder = new DbContextOptionsBuilder<TestDbContext>()
             .UseInMemoryDatabase("test");
+            
         _context = new TestDbContext(builder.Options);
-        _customerService = new CustomerService(_context);
+
+        _customerService = new CustomerService(new CustomerRepository(_context), new OrderRepository(_context));
     }
 
     [Test]

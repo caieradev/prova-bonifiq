@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using ProvaPub.Repository;
+using ProvaPub.Extensions;
+using ProvaPub.Repositories;
 using ProvaPub.Services;
 using ProvaPub.Strategies;
 
@@ -12,10 +13,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<RandomService>();
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<CustomerService>();
-builder.Services.AddScoped<OrderService>();
+builder.Services.RegisterIoCs();
+
 builder.Services.AddScoped<PixPaymentStrategy>();
 builder.Services.AddScoped<CreditCardPaymentStrategy>();
 builder.Services.AddScoped<PaypalPaymentStrategy>();
